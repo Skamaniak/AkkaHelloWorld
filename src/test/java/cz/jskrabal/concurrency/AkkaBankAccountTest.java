@@ -1,15 +1,15 @@
+package cz.jskrabal.concurrency;
+
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
 import akka.testkit.JavaTestKit;
-import cz.jskrabal.akka.BankAccountActor;
-import cz.jskrabal.akka.TransferActor;
-import cz.jskrabal.akka.messages.*;
+import cz.jskrabal.concurrency.akka.BankAccountActor;
+import cz.jskrabal.concurrency.akka.TransferActor;
+import cz.jskrabal.concurrency.akka.messages.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * Created by Jan Skrabal skrabalja@gmail.com

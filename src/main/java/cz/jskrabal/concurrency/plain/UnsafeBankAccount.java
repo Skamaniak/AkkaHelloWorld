@@ -1,4 +1,4 @@
-package cz.jskrabal.plain;
+package cz.jskrabal.concurrency.plain;
 
 /**
  * Created by Jan Skrabal skrabalja@gmail.com

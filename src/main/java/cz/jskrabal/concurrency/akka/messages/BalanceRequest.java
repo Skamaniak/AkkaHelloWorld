@@ -1,4 +1,4 @@
-package cz.jskrabal.akka.messages;
+package cz.jskrabal.concurrency.akka.messages;
 
 /**
  * Created by Jan Skrabal skrabalja@gmail.com

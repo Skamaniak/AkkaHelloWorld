@@ -1,6 +1,8 @@
-import cz.jskrabal.plain.BankAccount;
-import cz.jskrabal.plain.SynchronizedBankAccount;
-import cz.jskrabal.plain.UnsafeBankAccount;
+package cz.jskrabal.concurrency;
+
+import cz.jskrabal.concurrency.plain.BankAccount;
+import cz.jskrabal.concurrency.plain.SynchronizedBankAccount;
+import cz.jskrabal.concurrency.plain.UnsafeBankAccount;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

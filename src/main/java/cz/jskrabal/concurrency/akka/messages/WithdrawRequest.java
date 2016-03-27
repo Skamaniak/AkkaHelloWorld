@@ -1,4 +1,4 @@
-package cz.jskrabal.akka.messages;
+package cz.jskrabal.concurrency.akka.messages;
 
 public class WithdrawRequest {
         private long amount;

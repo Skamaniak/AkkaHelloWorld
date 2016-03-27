@@ -1,9 +1,9 @@
-package cz.jskrabal.akka;
+package cz.jskrabal.concurrency.akka;
 
 import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
 import akka.japi.Procedure;
-import cz.jskrabal.akka.messages.*;
+import cz.jskrabal.concurrency.akka.messages.*;
 
 import static cz.jskrabal.util.ActorUtils.*;
 
