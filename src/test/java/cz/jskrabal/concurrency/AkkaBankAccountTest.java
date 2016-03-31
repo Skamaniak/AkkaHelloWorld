@@ -6,7 +6,8 @@ import akka.actor.Props;
 import akka.testkit.JavaTestKit;
 import cz.jskrabal.concurrency.akka.BankAccountActor;
 import cz.jskrabal.concurrency.akka.TransferActor;
-import cz.jskrabal.concurrency.akka.messages.*;
+import cz.jskrabal.concurrency.akka.message.*;
+import cz.jskrabal.util.ActorUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -86,14 +87,13 @@ public class AkkaBankAccountTest extends MultiThreadTest{
             expectMsgEquals(DoneResponse.instance());
 
             executorService.execute(() -> {
-                JavaTestKit probe = new JavaTestKit(system);
-
-                transferTest(bankAccount1, bankAccount2, probe);
-                transferTest(bankAccount2, bankAccount1, probe);
+                transferTest(bankAccount1, bankAccount2);
+                transferTest(bankAccount2, bankAccount1);
             });
 
             awaitCompletion();
 
+            ActorUtils.busyWait();
             bankAccount1.tell(BalanceRequest.instance(), getRef());
             expectMsgEquals(new BalanceResponse(10000));
 
@@ -102,7 +102,8 @@ public class AkkaBankAccountTest extends MultiThreadTest{
 
         }
 
-            private void transferTest(ActorRef bankAccount1, ActorRef bankAccount2, JavaTestKit probe) {
+            private void transferTest(ActorRef bankAccount1, ActorRef bankAccount2) {
+                JavaTestKit probe = new JavaTestKit(system);
                 ActorRef transferActor = system.actorOf(Props.create(TransferActor.class));
                 transferActor.tell(new TransferRequest(1, bankAccount1, bankAccount2), probe.getRef());
                 probe.expectMsgEquals(DoneResponse.instance());

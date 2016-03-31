@@ -1,7 +1,7 @@
 package cz.jskrabal.concurrency.akka;
 
 import akka.actor.UntypedActor;
-import cz.jskrabal.concurrency.akka.messages.*;
+import cz.jskrabal.concurrency.akka.message.*;
 
 import static cz.jskrabal.util.ActorUtils.*;
 
@@ -17,9 +17,7 @@ public class BankAccountActor extends UntypedActor {
             DepositRequest depositMessageMessage = inferType(message);
             balance += depositMessageMessage.getAmount();
             respond(DoneResponse.instance());
-        }
-
-        if (message instanceof WithdrawRequest) {
+        } else if (message instanceof WithdrawRequest) {
             WithdrawRequest withdrawMessageMessage = inferType(message);
             long amount = withdrawMessageMessage.getAmount();
             if (balance >= amount) {
@@ -28,10 +26,10 @@ public class BankAccountActor extends UntypedActor {
             } else {
                 respond(new FailedResponse("Insufficient funds"));
             }
-        }
-
-        if(message instanceof BalanceRequest) {
+        } else if(message instanceof BalanceRequest) {
             respond(new BalanceResponse(balance));
+        } else {
+            unhandled(message);
         }
     }
 

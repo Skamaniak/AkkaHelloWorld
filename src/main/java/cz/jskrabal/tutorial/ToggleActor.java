@@ -11,13 +11,15 @@ import cz.jskrabal.util.ActorUtils;
  * Created by Jan Skrabal skrabalja@gmail.com
  */
 public class ToggleActor extends UntypedActor {
-    public static final String TOGGLE_MESSAGE = "toggle";
+    private static final String TOGGLE_MESSAGE = "toggle";
 
     @Override
     public void onReceive(Object message) throws Exception {
         if(message.equals(TOGGLE_MESSAGE)) {
             getSender().tell("Switched on", getSelf());
             getContext().become(switchedOn);
+        } else {
+            unhandled(message);
         }
     }
 
@@ -25,6 +27,8 @@ public class ToggleActor extends UntypedActor {
         if(message.equals(TOGGLE_MESSAGE)) {
             getSender().tell("Switched off", getSelf());
             getContext().unbecome();
+        } else {
+            unhandled(message);
         }
     };
 

@@ -15,6 +15,8 @@ public class GreetingsActor extends UntypedActor {
     public void onReceive(Object message) throws Exception {
         if(message instanceof String) {
             getSender().tell("Hello " + message + '!', getSelf());
+        } else {
+            getSender().tell("Hello stranger!", getSelf());
         }
     }
 
@@ -25,6 +27,7 @@ public class GreetingsActor extends UntypedActor {
         ActorRef printActor = system.actorOf(Props.create(ActorUtils.PrintActor.class));
 
         greetingsActor.tell("John Doe", printActor);
+        greetingsActor.tell(42, printActor);
 
         ActorUtils.busyWait();
         system.shutdown();

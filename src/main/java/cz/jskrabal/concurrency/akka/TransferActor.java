@@ -3,7 +3,7 @@ package cz.jskrabal.concurrency.akka;
 import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
 import akka.japi.Procedure;
-import cz.jskrabal.concurrency.akka.messages.*;
+import cz.jskrabal.concurrency.akka.message.*;
 
 import static cz.jskrabal.util.ActorUtils.*;
 
@@ -38,10 +38,11 @@ public class TransferActor extends UntypedActor{
             if(message instanceof DoneResponse) {
                 to.tell(new DepositRequest(amount), getSelf());
                 getContext().become(new AwaitDeposit<>(client));
-            }
-            if(message instanceof FailedResponse) {
+            } else if(message instanceof FailedResponse) {
                 client.tell(message, getSelf());
                 context().stop(getSelf());
+            } else {
+                unhandled(message);
             }
         }
     }
@@ -58,10 +59,11 @@ public class TransferActor extends UntypedActor{
             if(message instanceof DoneResponse) {
                 client.tell(DoneResponse.instance(), getSelf());
                 context().stop(getSelf());
-            }
-            if(message instanceof FailedResponse) {
+            } else if(message instanceof FailedResponse) {
                 client.tell(message, getSelf());
                 context().stop(getSelf());
+            } else {
+                unhandled(message);
             }
         }
     }
