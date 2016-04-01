@@ -27,7 +27,7 @@ public class AkkaBankAccountTest extends MultiThreadTest{
     @After
     public void cleanUp() {
         super.cleanUp();
-        system.shutdown();
+        system.terminate();
     }
 
     @Test
@@ -35,20 +35,20 @@ public class AkkaBankAccountTest extends MultiThreadTest{
         new JavaTestKit(system) {{
             final ActorRef bankAccount = system.actorOf(Props.create(BankAccountActor.class));
 
-            bankAccount.tell(new DepositRequest(10), getRef());
-            expectMsgEquals(DoneResponse.instance());
+            bankAccount.tell(new Deposit(10), getRef());
+            expectMsgEquals(Done.instance());
 
-            bankAccount.tell(BalanceRequest.instance(), getRef());
-            expectMsgEquals(new BalanceResponse(10));
+            bankAccount.tell(Balance.instance(), getRef());
+            expectMsgEquals(new Balance.BalanceResponse(10));
 
-            bankAccount.tell(new WithdrawRequest(5), getRef());
-            expectMsgEquals(DoneResponse.instance());
+            bankAccount.tell(new Withdraw(5), getRef());
+            expectMsgEquals(Done.instance());
 
-            bankAccount.tell(BalanceRequest.instance(), getRef());
-            expectMsgEquals(new BalanceResponse(5));
+            bankAccount.tell(Balance.instance(), getRef());
+            expectMsgEquals(new Balance.BalanceResponse(5));
 
-            bankAccount.tell(new WithdrawRequest(10), getRef());
-            expectMsgEquals(new FailedResponse("Insufficient funds"));
+            bankAccount.tell(new Withdraw(10), getRef());
+            expectMsgEquals(new Failed("Insufficient funds"));
         }};
     }
 
@@ -59,17 +59,17 @@ public class AkkaBankAccountTest extends MultiThreadTest{
             final ActorRef bankAccount2 = system.actorOf(Props.create(BankAccountActor.class));
             final ActorRef transferActor = system.actorOf(Props.create(TransferActor.class));
 
-            bankAccount1.tell(new DepositRequest(10), getRef());
-            expectMsgEquals(DoneResponse.instance());
+            bankAccount1.tell(new Deposit(10), getRef());
+            expectMsgEquals(Done.instance());
 
-            transferActor.tell(new TransferRequest(5, bankAccount1, bankAccount2), getRef());
-            expectMsgEquals(DoneResponse.instance());
+            transferActor.tell(new Transfer(5, bankAccount1, bankAccount2), getRef());
+            expectMsgEquals(Done.instance());
 
-            bankAccount1.tell(BalanceRequest.instance(), getRef());
-            expectMsgEquals(new BalanceResponse(5));
+            bankAccount1.tell(Balance.instance(), getRef());
+            expectMsgEquals(new Balance.BalanceResponse(5));
 
-            bankAccount2.tell(BalanceRequest.instance(), getRef());
-            expectMsgEquals(new BalanceResponse(5));
+            bankAccount2.tell(Balance.instance(), getRef());
+            expectMsgEquals(new Balance.BalanceResponse(5));
 
         }};
     }
@@ -80,11 +80,11 @@ public class AkkaBankAccountTest extends MultiThreadTest{
             final ActorRef bankAccount1 = system.actorOf(Props.create(BankAccountActor.class));
             final ActorRef bankAccount2 = system.actorOf(Props.create(BankAccountActor.class));
 
-            bankAccount1.tell(new DepositRequest(10000), getRef());
-            expectMsgEquals(DoneResponse.instance());
+            bankAccount1.tell(new Deposit(10000), getRef());
+            expectMsgEquals(Done.instance());
 
-            bankAccount2.tell(new DepositRequest(10000), getRef());
-            expectMsgEquals(DoneResponse.instance());
+            bankAccount2.tell(new Deposit(10000), getRef());
+            expectMsgEquals(Done.instance());
 
             executorService.execute(() -> {
                 transferTest(bankAccount1, bankAccount2);
@@ -94,19 +94,19 @@ public class AkkaBankAccountTest extends MultiThreadTest{
             awaitCompletion();
 
             ActorUtils.busyWait();
-            bankAccount1.tell(BalanceRequest.instance(), getRef());
-            expectMsgEquals(new BalanceResponse(10000));
+            bankAccount1.tell(Balance.instance(), getRef());
+            expectMsgEquals(new Balance.BalanceResponse(10000));
 
-            bankAccount2.tell(BalanceRequest.instance(), getRef());
-            expectMsgEquals(new BalanceResponse(10000));
+            bankAccount2.tell(Balance.instance(), getRef());
+            expectMsgEquals(new Balance.BalanceResponse(10000));
 
         }
 
             private void transferTest(ActorRef bankAccount1, ActorRef bankAccount2) {
                 JavaTestKit probe = new JavaTestKit(system);
                 ActorRef transferActor = system.actorOf(Props.create(TransferActor.class));
-                transferActor.tell(new TransferRequest(1, bankAccount1, bankAccount2), probe.getRef());
-                probe.expectMsgEquals(DoneResponse.instance());
+                transferActor.tell(new Transfer(1, bankAccount1, bankAccount2), probe.getRef());
+                probe.expectMsgEquals(Done.instance());
             }
         };
     }

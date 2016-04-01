@@ -1,8 +1,8 @@
 package cz.jskrabal.concurrency.akka.message;
 
-public class DepositRequest {
+public class Deposit {
         private long amount;
-        public DepositRequest(long amount) {
+        public Deposit(long amount) {
             if (amount <= 0) {
                 throw new IllegalArgumentException("Amount must be greater than 0");
             }
@@ -18,7 +18,7 @@ public class DepositRequest {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
 
-            DepositRequest depositMessage = (DepositRequest) o;
+            Deposit depositMessage = (Deposit) o;
 
             return amount == depositMessage.amount;
 

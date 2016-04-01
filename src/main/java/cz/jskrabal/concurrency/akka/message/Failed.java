@@ -1,9 +1,9 @@
 package cz.jskrabal.concurrency.akka.message;
 
-public class FailedResponse {
+public class Failed {
         private String errorMessage;
 
-        public FailedResponse(String errorMessage) {
+        public Failed(String errorMessage) {
             this.errorMessage = errorMessage;
         }
 
@@ -16,7 +16,7 @@ public class FailedResponse {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
 
-            FailedResponse failedMessage = (FailedResponse) o;
+            Failed failedMessage = (Failed) o;
 
             return errorMessage != null ? errorMessage.equals(failedMessage.errorMessage) : failedMessage.errorMessage == null;
 

@@ -3,7 +3,7 @@ package cz.jskrabal.concurrency.akka;
 import akka.actor.UntypedActor;
 import cz.jskrabal.concurrency.akka.message.*;
 
-import static cz.jskrabal.util.ActorUtils.*;
+import static cz.jskrabal.util.ActorUtils.inferType;
 
 /**
  * Created by Jan Skrabal skrabalja@gmail.com
@@ -13,21 +13,21 @@ public class BankAccountActor extends UntypedActor {
 
     @Override
     public void onReceive(Object message) throws Exception {
-        if(message instanceof DepositRequest) {
-            DepositRequest depositMessageMessage = inferType(message);
+        if(message instanceof Deposit) {
+            Deposit depositMessageMessage = inferType(message);
             balance += depositMessageMessage.getAmount();
-            respond(DoneResponse.instance());
-        } else if (message instanceof WithdrawRequest) {
-            WithdrawRequest withdrawMessageMessage = inferType(message);
+            respond(Done.instance());
+        } else if (message instanceof Withdraw) {
+            Withdraw withdrawMessageMessage = inferType(message);
             long amount = withdrawMessageMessage.getAmount();
             if (balance >= amount) {
                 balance -= amount;
-                respond(DoneResponse.instance());
+                respond(Done.instance());
             } else {
-                respond(new FailedResponse("Insufficient funds"));
+                respond(new Failed("Insufficient funds"));
             }
-        } else if(message instanceof BalanceRequest) {
-            respond(new BalanceResponse(balance));
+        } else if(message instanceof Balance) {
+            respond(new Balance.BalanceResponse(balance));
         } else {
             unhandled(message);
         }

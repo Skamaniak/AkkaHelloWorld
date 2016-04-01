@@ -1,9 +1,9 @@
 package cz.jskrabal.concurrency.akka.message;
 
-public class WithdrawRequest {
+public class Withdraw {
         private long amount;
 
-        public WithdrawRequest(long amount) {
+        public Withdraw(long amount) {
             this.amount = amount;
         }
 
@@ -16,7 +16,7 @@ public class WithdrawRequest {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
 
-            WithdrawRequest withdrawMessage = (WithdrawRequest) o;
+            Withdraw withdrawMessage = (Withdraw) o;
 
             return amount == withdrawMessage.amount;
 

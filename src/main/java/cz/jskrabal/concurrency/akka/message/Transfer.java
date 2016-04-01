@@ -5,12 +5,12 @@ import akka.actor.ActorRef;
 /**
  * Created by Jan Skrabal skrabalja@gmail.com
  */
-public class TransferRequest {
+public class Transfer {
     private ActorRef from;
     private ActorRef to;
     private long amount;
 
-    public TransferRequest(long amount, ActorRef from, ActorRef to) {
+    public Transfer(long amount, ActorRef from, ActorRef to) {
         this.amount = amount;
         this.from = from;
         this.to = to;
@@ -33,7 +33,7 @@ public class TransferRequest {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        TransferRequest that = (TransferRequest) o;
+        Transfer that = (Transfer) o;
 
         if (amount != that.amount) return false;
         if (from != null ? !from.equals(that.from) : that.from != null) return false;

@@ -5,7 +5,7 @@ import akka.actor.UntypedActor;
 import akka.japi.Procedure;
 import cz.jskrabal.concurrency.akka.message.*;
 
-import static cz.jskrabal.util.ActorUtils.*;
+import static cz.jskrabal.util.ActorUtils.inferType;
 
 /**
  * Created by Jan Skrabal skrabalja@gmail.com
@@ -13,11 +13,11 @@ import static cz.jskrabal.util.ActorUtils.*;
 public class TransferActor extends UntypedActor{
     @Override
     public void onReceive(Object message) throws Exception {
-        if(message instanceof TransferRequest) {
-            TransferRequest request = inferType(message);
+        if(message instanceof Transfer) {
+            Transfer request = inferType(message);
             long amount = request.getAmount();
 
-            request.getFrom().tell(new WithdrawRequest(amount), getSelf());
+            request.getFrom().tell(new Withdraw(amount), getSelf());
             getContext().become(new AwaitWithdraw<>(getSender(), request.getTo(), amount));
         }
     }
@@ -35,10 +35,10 @@ public class TransferActor extends UntypedActor{
 
         @Override
         public void apply(T message) throws Exception {
-            if(message instanceof DoneResponse) {
-                to.tell(new DepositRequest(amount), getSelf());
+            if(message instanceof Done) {
+                to.tell(new Deposit(amount), getSelf());
                 getContext().become(new AwaitDeposit<>(client));
-            } else if(message instanceof FailedResponse) {
+            } else if(message instanceof Failed) {
                 client.tell(message, getSelf());
                 context().stop(getSelf());
             } else {
@@ -56,10 +56,10 @@ public class TransferActor extends UntypedActor{
 
         @Override
         public void apply(T message) throws Exception {
-            if(message instanceof DoneResponse) {
-                client.tell(DoneResponse.instance(), getSelf());
+            if(message instanceof Done) {
+                client.tell(Done.instance(), getSelf());
                 context().stop(getSelf());
-            } else if(message instanceof FailedResponse) {
+            } else if(message instanceof Failed) {
                 client.tell(message, getSelf());
                 context().stop(getSelf());
             } else {

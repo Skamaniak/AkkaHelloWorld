@@ -7,7 +7,7 @@ import akka.actor.UntypedActor;
 import akka.routing.RoundRobinPool;
 
 import static cz.jskrabal.tutorial.workload.Messages.*;
-import static cz.jskrabal.util.ActorUtils.*;
+import static cz.jskrabal.util.ActorUtils.inferType;
 
 public class MasterActor extends UntypedActor {
     private final int nrOfMessages;
@@ -55,8 +55,8 @@ public class MasterActor extends UntypedActor {
 
         final ActorRef listener = system.actorOf(Props.create(ListenerActor.class), "listener");
         ActorRef master = system.actorOf(Props.create(MasterActor.class, nrOfWorkers, nrOfMessages, nrOfElements, listener), "master");
-        master.tell(new Calculate(), system.guardian());
 
+        master.tell(new Calculate(), system.guardian());
     }
 
     public static void main(String[] args) {

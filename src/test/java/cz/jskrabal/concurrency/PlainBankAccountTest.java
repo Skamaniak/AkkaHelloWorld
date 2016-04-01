@@ -5,6 +5,10 @@ import cz.jskrabal.concurrency.plain.SynchronizedBankAccount;
 import cz.jskrabal.concurrency.plain.UnsafeBankAccount;
 import org.junit.Test;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadInfo;
+import java.lang.management.ThreadMXBean;
+
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -14,7 +18,7 @@ public class PlainBankAccountTest extends MultiThreadTest{
     private static final int TESTS_COUNT = 10000;
 
     @Test
-    public void unsafeBankAccountTest() {
+    public void unsafeBankAccountTest() throws InterruptedException {
         BankAccount bankAccount1 = new UnsafeBankAccount();
         BankAccount bankAccount2 = new UnsafeBankAccount();
         testTransfer(TESTS_COUNT, bankAccount1, bankAccount2);
@@ -23,14 +27,14 @@ public class PlainBankAccountTest extends MultiThreadTest{
     }
 
     @Test
-    public void safeBankAccountTest() {
+    public void synchronizedBankAccountTest() throws InterruptedException {
         BankAccount bankAccount1 = new SynchronizedBankAccount();
         BankAccount bankAccount2 = new SynchronizedBankAccount();
 
         testTransfer(TESTS_COUNT, bankAccount1, bankAccount2);
     }
 
-    private void testTransfer(int count, BankAccount bankAccount1, BankAccount bankAccount2) {
+    private void testTransfer(int count, BankAccount bankAccount1, BankAccount bankAccount2) throws InterruptedException {
         bankAccount1.deposit(count);
         bankAccount2.deposit(count);
 
@@ -38,10 +42,22 @@ public class PlainBankAccountTest extends MultiThreadTest{
             executorService.execute(() -> bankAccount1.transferTo(1, bankAccount2));
             executorService.execute(() -> bankAccount2.transferTo(1, bankAccount1));
         }
-
+        Thread.sleep(500);
+        detectDeadlocks();
         awaitCompletion();
     }
 
 
+    private void detectDeadlocks(){
+        ThreadMXBean bean = ManagementFactory.getThreadMXBean();
+        long[] threadIds = bean.findDeadlockedThreads();
 
+        if (threadIds != null) {
+            ThreadInfo[] infos = bean.getThreadInfo(threadIds);
+
+            for (ThreadInfo info : infos) {
+                System.out.println("Deadlock detected: " + info.getThreadName());
+            }
+        }
+    }
 }
